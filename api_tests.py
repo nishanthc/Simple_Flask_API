@@ -122,6 +122,7 @@ class APITestCase(unittest.TestCase):
 
     def test_LastPlayed(self):
         client = self.app.get('/last_played')
+
         assert "200 OK" == client.status
 
         client = APITestCase.newTrack(self, id=1234567, title="a recently played song",
@@ -133,6 +134,7 @@ class APITestCase(unittest.TestCase):
         client = self.app.get('/last_played')
         last_played = json.loads(client.data.decode())
         id_of_last_played = last_played['tracks'][0]['id']
+
         assert int(id_of_last_played) == int(1234567)
 
     def test_FilterbyName(self):
@@ -149,12 +151,13 @@ class APITestCase(unittest.TestCase):
         assert str(closest_match) == str(test_title)
 
     def test_artists(self):
-        test_title = "a unique name"
-        client = APITestCase.newTrack(self, id=2525, title=test_title,
+        test_title_fail = "not the title with the latest play"
+        test_title = "The title with the latest play"
+        client = APITestCase.newTrack(self, id=2525, title=test_title_fail,
                                       artist="an artist with 5 songs", duration=232,
                                       last_play="2000-03-14 10:23:26")
         assert "201 CREATED" == client.status
-        client = APITestCase.newTrack(self, id=2526, title=test_title,
+        client = APITestCase.newTrack(self, id=2526, title=test_title_fail,
                                       artist="an artist with 5 songs", duration=232,
                                       last_play="2010-03-14 10:23:26")
         assert "201 CREATED" == client.status
@@ -162,15 +165,20 @@ class APITestCase(unittest.TestCase):
                                       artist="an artist with 5 songs", duration=232,
                                       last_play="2030-03-14 10:23:26")
         assert "201 CREATED" == client.status
-        client = APITestCase.newTrack(self, id=2527, title=test_title,
+        client = APITestCase.newTrack(self, id=2527, title=test_title_fail,
                                       artist="an artist with 5 songs", duration=232,
                                       last_play="2020-03-14 10:23:26")
         assert "201 CREATED" == client.status
 
 
+
         client = self.app.get('/artists')
         artists = json.loads(client.data.decode())
-        print(artists)
+        artists = artists['artists']
+
+        test_artist = next((artist for artist in artists if artist["artist"] == "an artist with 5 songs"))
+        assert str(test_artist['artist']) == "an artist with 5 songs"
+        assert str(test_artist['last_played_track']) == "The title with the latest play"
 
 
 

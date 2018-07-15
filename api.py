@@ -89,7 +89,7 @@ class Track(Resource):
 class LastPlayed(Resource):
     def get(self):
         all_tracks_sorted = sorted(all_tracks, key=lambda key: key['last_play'],reverse=True)[:100]
-        return {'tracks': all_tracks_sorted}
+        return {'tracks': all_tracks_sorted},200
 
 
 class FilterTracks(Resource):
@@ -99,7 +99,7 @@ class FilterTracks(Resource):
             title = track['title'].lower()
             if filter_text.lower() in title:
                 filtered_list.append(track)
-        return {'tracks': filtered_list},201
+        return {'tracks': filtered_list},200
 
 
 class Artists(Resource):
@@ -107,19 +107,22 @@ class Artists(Resource):
         list_of_artists = []
         artist_last_played_datetime = {}
         artist_last_played_track_title = {}
-
         artists_with_data = []
+
         for track in all_tracks:
             list_of_artists.append((track['artist']))
-            datetimestamp = track['last_play']
-            last_played_of_track = datetime.strptime(datetimestamp, '%Y-%m-%d %H:%M:%S')
+            datetimestamp_from_file = track['last_play']
+            last_played_of_track_from_file = datetime.strptime(datetimestamp_from_file, '%Y-%m-%d %H:%M:%S')
             artist = track['artist']
             title =  track['title']
             if artist not in artist_last_played_datetime:
-                artist_last_played_datetime[artist] = last_played_of_track
+                #print(artist + " was not in the list of artists, last play: "+ last_played_of_track_from_file.strftime('%Y-%m-%d %H:%M:%S') )
+                artist_last_played_datetime[artist] = last_played_of_track_from_file.strftime('%Y-%m-%d %H:%M:%S')
                 artist_last_played_track_title[artist] = title
-            if artist_last_played_datetime[artist] > last_played_of_track:
-                artist_last_played_datetime[artist] == last_played_of_track.strftime('%Y-%m-%d %H:%M:%S')
+
+
+            if  datetime.strptime(artist_last_played_datetime[artist], '%Y-%m-%d %H:%M:%S') < last_played_of_track_from_file:
+                artist_last_played_datetime[artist] = last_played_of_track_from_file.strftime('%Y-%m-%d %H:%M:%S')
                 artist_last_played_track_title[artist] = title
 
         artists_track_count = dict(Counter(list_of_artists))
@@ -127,9 +130,11 @@ class Artists(Resource):
 
         for artist in list_of_artists:
             if artist:
-                artists_with_data.append({"artist":artist,"plays":artists_track_count[artist],"last_played_track":str(artist_last_played_track_title[artist])})
-        artists_with_data = json.dumps(artists_with_data)
-        return {'artists': artists_with_data}, 201
+                artists_with_data.append({"artist":artist,"plays":artists_track_count[artist],
+                                          "last_played_track":str(artist_last_played_track_title[artist]),
+                                          "last_played":artist_last_played_datetime[artist]})
+        artists_with_data = artists_with_data
+        return {'artists': artists_with_data}, 200
 
 
 

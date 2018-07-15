@@ -163,3 +163,44 @@
 * **Sample Call:**
 
     curl http://localhost:5000/last_played
+    
+    
+ **Artists**
+----
+  Returns all artists along with the number of tracks they have and their most recently played track.
+
+* **URL**
+
+  /artists
+
+* **Method:**
+
+  `GET`
+
+*  **URL Params**
+
+   **Required:**
+
+   None
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+    "tracks": [
+        {
+    "artists": [
+        {
+            "artist": "Belinda Carlisle",
+            "plays": 3,
+            "last_played_track": "Heaven Is A Place On Earth"
+        },..`
+
+
+* **Sample Call:**
+
+    curl http://localhost:5000/artists

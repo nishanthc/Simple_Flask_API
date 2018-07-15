@@ -52,7 +52,6 @@ class SingleTrack(Resource):
 
     def post(self):
         args = parser.parse_args()
-        args['task']
         return args['task'], 201
 
 class Track(Resource):
@@ -131,8 +130,7 @@ class Artists(Resource):
         for artist in list_of_artists:
             if artist:
                 artists_with_data.append({"artist":artist,"plays":artists_track_count[artist],
-                                          "last_played_track":str(artist_last_played_track_title[artist]),
-                                          "last_played":artist_last_played_datetime[artist]})
+                                          "last_played_track":str(artist_last_played_track_title[artist])})
         artists_with_data = artists_with_data
         return {'artists': artists_with_data}, 200
 

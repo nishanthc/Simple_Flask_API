@@ -86,6 +86,7 @@ class Track(Resource):
         duration = (args['duration'])
         last_play = (args['last_play'])
 
+        # Check if track_id and duration are integers
         is_int(variable_name="track_id", variable_content=track_id)
         is_int(variable_name="duration", variable_content=duration)
 

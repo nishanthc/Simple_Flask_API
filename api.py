@@ -87,7 +87,7 @@ class LastPlayed(Resource):
 
 api.add_resource(Track, '/tracks')
 api.add_resource(SingleTrack, '/tracks/<track_id>')
-api.add_resource(LastPlayed, '/lastplayed')
+api.add_resource(LastPlayed, '/last_played')
 
 if __name__ == '__main__':
 

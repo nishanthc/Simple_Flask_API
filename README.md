@@ -77,3 +77,50 @@
 
     curl http://localhost:5000/tracks -d "id=4525&title=The Songs Name&artist=The Artists Name&duration=150&2018-05-17 16:56:21 new" -X POST -v
 
+
+**Last Played**
+----
+  Returns last 100 played tracks (the latest first).
+
+* **URL**
+
+  /last_played
+
+* **Method:**
+
+  `GET`
+
+*  **URL Params**
+
+   **Required:**
+
+   None
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+    "tracks": [
+        {
+            "id": "394",
+            "title": "Love Generation",
+            "artist": "Bob Sinclar / Gary Nesta Pine",
+            "duration": "172",
+            "last_play": "2018-05-17 16:59:11"
+        },
+        {
+            "id": "583",
+            "title": "Jus.....`
+
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{\"message\": \"track 100000 doesn\'t exist\"}`
+
+* **Sample Call:**
+
+    curl http://localhost:5000/last_played

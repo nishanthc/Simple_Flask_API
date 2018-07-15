@@ -33,6 +33,45 @@
     **Content:** `{\"message\": \"track 100000 doesn\'t exist\"}`
 
 
+
+**Create new track**
+----
+  Adds a new track and returns json data about the track
+
+* **URL**
+
+  /track
+
+* **Method:**
+
+  `POST`
+
+*  **URL Params**
+
+   **Required:**
+
+   None
+
+* **Data Params**
+
+  `track_id=[integer]`
+ `title=[string]`
+ `artist=[string]`
+ `duration=[integer]`
+ `lastplay=[datetime]`
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"track": [{"id": "1436", "title": "A new song!", "artist": "A New Artist", "duration": "259", "last_play": ' \
+       '"2018-02-23 08:24:37"}]}`
+
+* **Error Responses:**
+
+  * **Code:** 409 CONFLICT <br />
+    **Content:** `{"message": "track 1 already exists"}`
+
+
 * **Sample Call:**
 
     curl http://localhost:5000/todos -d "id=4525&title=The Songs Name&artist=The Artists Name&duration=150&2018-05-17 16:56:21 new" -X POST -v
+

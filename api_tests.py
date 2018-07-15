@@ -86,8 +86,13 @@ class APITestCase(unittest.TestCase):
         assert "400 BAD REQUEST" == client.status
 
         client = APITestCase.new_track(self, id=25352, title="a title of a different song", artist="An different artists name", duration="a random set of letters", last_play="2017-03-14 09:33:16")
+        print(client.data)
         assert "400 BAD REQUEST" == client.status
 
+    def test_add_new_track_message(self):
+        client = APITestCase.new_track(self, id=1, title="a title of a song", artist="An artists name", duration=532,
+                                       last_play="2017-03-14 09:33:16")
+        assert '{"message": "track 1 already exists"}' in client.data.decode()
 
 if __name__ == '__main__':
     unittest.main()

@@ -32,6 +32,12 @@ def write_to_file(data):
     with open('tracks.json','w') as json_file_w:
         json_file_w.write((json.dumps(data)))
 
+def is_int(variable_name,variable_content):
+    try:
+        val = int(variable_content)
+    except ValueError:
+        abort(400, message="{} {} is not an integer".format(variable_name,variable_content))
+
 class SingleTrack(Resource):
     def get(self, track_id):
         CheckTrackExists(track_id)
@@ -56,16 +62,9 @@ class Track(Resource):
         duration = (args['duration'])
         last_play = (args['last_play'])
 
+        is_int(variable_name="track_id", variable_content=track_id)
+        is_int(variable_name="duration", variable_content=duration)
 
-        try:
-            val = int(track_id)
-        except ValueError:
-            abort(400, message="track_id {} is not an integer".format(track_id))
-
-        try:
-            val = int(duration)
-        except ValueError:
-            abort(400, message="duration {} is not an integer".format(track_id))
 
         if CheckTrackExists(track_id,error_redirect=False) == True:
             abort(409, message="track {} already exists".format(track_id))

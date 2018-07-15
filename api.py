@@ -19,11 +19,14 @@ with open('tracks.json') as json_file:
     all_tracks = json.load(json_file)
 
 
-def CheckTrackExists(track_id):
+def CheckTrackExists(track_id,error_redirect=True):
     track = (list(filter(lambda track: track['id'] == track_id, all_tracks)))
 
-    if not track:
+    if not track and error_redirect:
         abort(404, message="track {} doesn't exist".format(track_id))
+
+    if track and not error_redirect:
+        return True
 
 
 class SingleTrack(Resource):
@@ -44,7 +47,18 @@ class Track(Resource):
 
     def post(self):
         args = parser.parse_args()
-        return args['id'].decode, 201
+        track_id = (args['id'])
+        title = (args['title'])
+        artist = (args['artist'])
+        duration = (args['duration'])
+        last_play = (args['last_play'])
+
+        if CheckTrackExists(track_id,error_redirect=False) == True:
+            abort(409, message="track {} already exists".format(track_id))
+
+
+        print (id,title,artist,duration,last_play)
+        return args['id'], 201
 
 
 class TrackList(Resource):

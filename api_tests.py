@@ -48,15 +48,24 @@ class FlaskrTestCase(unittest.TestCase):
         assert '{"track": [{"id": "100", "title": "Addicted To Love", "artist": "Robert Palmer", "duration": "188", ' \
                '"last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
-    def test_add_new_track(self):
+    def test_add_new_track_status(self):
         client = self.app.post('/tracks',data=dict(
-            id="1000",
+            id="1",
             title="A new song",
             artist="A new artist",
-            duration="842",
+            duration=842,
             last_play="2017-03-14 09:33:16"
                                                   ))
-        print (client.data)
+        assert "409 CONFLICT" == client.status
+
+        client = self.app.post('/tracks',data=dict(
+            id="10000",
+            title="A new song",
+            artist="A new artist",
+            duration=842,
+            last_play="2017-03-14 09:33:16"
+                                                  ))
+        assert "201 CREATED" == client.status
 
 
 if __name__ == '__main__':

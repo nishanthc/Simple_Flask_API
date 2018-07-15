@@ -56,6 +56,17 @@ class Track(Resource):
         duration = (args['duration'])
         last_play = (args['last_play'])
 
+
+        try:
+            val = int(track_id)
+        except ValueError:
+            abort(400, message="track_id {} is not an integer".format(track_id))
+
+        try:
+            val = int(duration)
+        except ValueError:
+            abort(400, message="duration {} is not an integer".format(track_id))
+
         if CheckTrackExists(track_id,error_redirect=False) == True:
             abort(409, message="track {} already exists".format(track_id))
 

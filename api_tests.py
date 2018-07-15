@@ -23,9 +23,6 @@ class APITestCase(unittest.TestCase):
         APITestCase.reset_file(self)
 
 
-
-
-
     def newTrack(self,id,title,artist,duration,last_play):
         client = self.app.post('/tracks', data=dict(
             id=id,
@@ -122,6 +119,7 @@ class APITestCase(unittest.TestCase):
 
 
 
+
     def test_LastPlayed(self):
         client = self.app.get('/last_played')
         assert "200 OK" == client.status
@@ -136,6 +134,21 @@ class APITestCase(unittest.TestCase):
         last_played = json.loads(client.data.decode())
         id_of_last_played = last_played['tracks'][0]['id']
         assert int(id_of_last_played) == int(1234567)
+
+    def test_FilterbyName(self):
+        test_title = "a unique name"
+        client = APITestCase.newTrack(self, id=1234568, title=test_title,
+                                      artist="an artists name", duration=232,
+                                      last_play="2010-03-14 10:23:26")
+        assert "201 CREATED" == client.status
+
+        client = self.app.get('/tracks/filter_by_name/'+test_title)
+        print(client.data)
+        filtered_tracks = json.loads(client.data.decode())
+        closest_match = filtered_tracks['tracks'][0]['title']
+        assert str(closest_match) == str(test_title)
+
+
 
 
 if __name__ == '__main__':

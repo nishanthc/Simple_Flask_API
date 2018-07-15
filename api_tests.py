@@ -143,10 +143,35 @@ class APITestCase(unittest.TestCase):
         assert "201 CREATED" == client.status
 
         client = self.app.get('/tracks/filter_by_name/'+test_title)
-        print(client.data)
         filtered_tracks = json.loads(client.data.decode())
+
         closest_match = filtered_tracks['tracks'][0]['title']
         assert str(closest_match) == str(test_title)
+
+    def test_artists(self):
+        test_title = "a unique name"
+        client = APITestCase.newTrack(self, id=2525, title=test_title,
+                                      artist="an artist with 5 songs", duration=232,
+                                      last_play="2000-03-14 10:23:26")
+        assert "201 CREATED" == client.status
+        client = APITestCase.newTrack(self, id=2526, title=test_title,
+                                      artist="an artist with 5 songs", duration=232,
+                                      last_play="2010-03-14 10:23:26")
+        assert "201 CREATED" == client.status
+        client = APITestCase.newTrack(self, id=2528, title=test_title,
+                                      artist="an artist with 5 songs", duration=232,
+                                      last_play="2030-03-14 10:23:26")
+        assert "201 CREATED" == client.status
+        client = APITestCase.newTrack(self, id=2527, title=test_title,
+                                      artist="an artist with 5 songs", duration=232,
+                                      last_play="2020-03-14 10:23:26")
+        assert "201 CREATED" == client.status
+
+
+        client = self.app.get('/artists')
+        artists = json.loads(client.data.decode())
+        print(artists)
+
 
 
 

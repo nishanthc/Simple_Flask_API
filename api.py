@@ -1,3 +1,5 @@
+from collections import Counter
+from datetime import datetime
 from flask import Flask
 from flask_restful import reqparse, Resource, Api, abort
 import json
@@ -97,12 +99,45 @@ class FilterTracks(Resource):
             title = track['title'].lower()
             if filter_text.lower() in title:
                 filtered_list.append(track)
-        return {'tracks': filtered_list}
+        return {'tracks': filtered_list},201
+
+
+class Artists(Resource):
+    def get(self):
+        list_of_artists = []
+        artist_last_played_datetime = {}
+        artist_last_played_track_title = {}
+
+        artists_with_data = []
+        for track in all_tracks:
+            list_of_artists.append((track['artist']))
+            datetimestamp = track['last_play']
+            last_played_of_track = datetime.strptime(datetimestamp, '%Y-%m-%d %H:%M:%S')
+            artist = track['artist']
+            title =  track['title']
+            if artist not in artist_last_played_datetime:
+                artist_last_played_datetime[artist] = last_played_of_track
+                artist_last_played_track_title[artist] = title
+            if artist_last_played_datetime[artist] > last_played_of_track:
+                artist_last_played_datetime[artist] == last_played_of_track.strftime('%Y-%m-%d %H:%M:%S')
+                artist_last_played_track_title[artist] = title
+
+        artists_track_count = dict(Counter(list_of_artists))
+        list_of_artists = list(set(list_of_artists))
+
+        for artist in list_of_artists:
+            if artist:
+                artists_with_data.append({"artist":artist,"plays":artists_track_count[artist],"last_played_track":str(artist_last_played_track_title[artist])})
+        artists_with_data = json.dumps(artists_with_data)
+        return {'artists': artists_with_data}, 201
+
+
 
 api.add_resource(Track, '/tracks')
 api.add_resource(SingleTrack, '/tracks/<track_id>')
 api.add_resource(FilterTracks, '/tracks/filter_by_name/<filter_text>')
 api.add_resource(LastPlayed, '/last_played')
+api.add_resource(Artists, '/artists')
 
 if __name__ == '__main__':
 

@@ -1,4 +1,4 @@
-#
+
 **Show Track**
 ----
   Returns json data about a single track.
@@ -56,10 +56,10 @@
 
 * **Data Params**
 
-  `track_id=[integer]`
- `title=[string]`
- `artist=[string]`
- `duration=[integer]`
+  `track_id=[integer]`<br>
+ `title=[string]`<br>
+ `artist=[string]`<br>
+ `duration=[integer]`<br>
  `lastplay=[datetime]`
 * **Success Response:**
 

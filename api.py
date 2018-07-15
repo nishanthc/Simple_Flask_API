@@ -15,8 +15,8 @@ parser.add_argument('artist')
 parser.add_argument('duration')
 parser.add_argument('last_play')
 
-with open('tracks.json') as json_file:
-    all_tracks = json.load(json_file)
+with open('tracks.json') as json_file_r:
+    all_tracks = json.load(json_file_r)
 
 
 def CheckTrackExists(track_id,error_redirect=True):
@@ -28,6 +28,9 @@ def CheckTrackExists(track_id,error_redirect=True):
     if track and not error_redirect:
         return True
 
+def write_to_file(data):
+    with open('tracks.json','w') as json_file_w:
+        json_file_w.write((json.dumps(data)))
 
 class SingleTrack(Resource):
     def get(self, track_id):
@@ -56,9 +59,15 @@ class Track(Resource):
         if CheckTrackExists(track_id,error_redirect=False) == True:
             abort(409, message="track {} already exists".format(track_id))
 
+        all_tracks.append({'id':track_id,
+                           'title':title,
+                           'artist':artist,
+                           'duration':duration,
+                           'last_play':last_play})
 
-        print (id,title,artist,duration,last_play)
-        return args['id'], 201
+        all_tracks_sorted = sorted(all_tracks, key=lambda key: key['id'])
+        write_to_file(all_tracks_sorted)
+        return SingleTrack.get(self,track_id=track_id), 201
 
 
 class TrackList(Resource):

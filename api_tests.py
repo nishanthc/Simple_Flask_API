@@ -3,14 +3,27 @@ import json
 import unittest
 
 
-class FlaskrTestCase(unittest.TestCase):
+class APITestCase(unittest.TestCase):
 
     def setUp(self):
 
         api.app.testing = True
-        with open('tracks.json') as json_file:
+        with open('tracks_backup.json') as json_file:
             self.all_tracks = json.load(json_file)
+
+        with open('tracks.json', 'w') as json_file_w:
+            json_file_w.write(json.dumps(self.all_tracks))
         self.app = api.app.test_client()
+
+    def new_track(self,id,title,artist,duration,last_play):
+        client = self.app.post('/tracks', data=dict(
+            id=id,
+            title=title,
+            artist=artist,
+            duration=duration,
+            last_play=last_play
+        ))
+        return client
 
 
     def test_get_single_track_status(self):
@@ -48,25 +61,26 @@ class FlaskrTestCase(unittest.TestCase):
         assert '{"track": [{"id": "100", "title": "Addicted To Love", "artist": "Robert Palmer", "duration": "188", ' \
                '"last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
-    def test_add_new_track_status(self):
-        client = self.app.post('/tracks',data=dict(
-            id="1",
-            title="A new song",
-            artist="A new artist",
-            duration=842,
-            last_play="2017-03-14 09:33:16"
-                                                  ))
-        assert "409 CONFLICT" == client.status
 
-        client = self.app.post('/tracks',data=dict(
-            id="10000",
-            title="A new song",
-            artist="A new artist",
-            duration=842,
-            last_play="2017-03-14 09:33:16"
-                                                  ))
+
+
+    def test_add_new_track_status(self):
+
+
+        client = APITestCase.new_track(self, id="1", title="a title of a song", artist="An artists name", duration=532, last_play="2017-03-14 09:33:16")
+        assert "409 CONFLICT" == client.status
+        assert '{"message": "track 1 already exists"}' in client.data.decode()
+
+        client = APITestCase.new_track(self, id="900000", title="a title of a song", artist="An artists name", duration=532, last_play="2017-03-14 09:33:16")
+        print(client.status)
         assert "201 CREATED" == client.status
 
+
+        client = APITestCase.new_track(self, id="900000", title="a title of a different song", artist="An different artists name", duration=22, last_play="2017-03-14 09:33:16")
+        assert "409 CONFLICT" == client.status
+
+        client = APITestCase.new_track(self, id="600000", title="a title of a different song", artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
+        assert "201 CREATED" == client.status
 
 if __name__ == '__main__':
     unittest.main()

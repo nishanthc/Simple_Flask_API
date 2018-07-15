@@ -64,35 +64,52 @@ class APITestCase(unittest.TestCase):
 
 
 
-    def test_add_new_track_status(self):
+    def test_add_new_track_status_message(self):
 
 
-        client = APITestCase.new_track(self, id=1, title="a title of a song", artist="An artists name", duration=532, last_play="2017-03-14 09:33:16")
-        assert "409 CONFLICT" == client.status
-        assert '{"message": "track 1 already exists"}' in client.data.decode()
-
-        client = APITestCase.new_track(self, id=900000, title="a title of a song", artist="An artists name", duration=532, last_play="2017-03-14 09:33:16")
-        assert "201 CREATED" == client.status
-
-
-        client = APITestCase.new_track(self, id=900000, title="a title of a different song", artist="An different artists name", duration=22, last_play="2017-03-14 09:33:16")
-        assert "409 CONFLICT" == client.status
-
-        client = APITestCase.new_track(self, id=600000, title="a title of a different song", artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
-        assert "201 CREATED" == client.status
-
-
-        client = APITestCase.new_track(self, id="non numerical input", title="a title of a different song", artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
-        assert "400 BAD REQUEST" == client.status
-
-        client = APITestCase.new_track(self, id=25352, title="a title of a different song", artist="An different artists name", duration="a random set of letters", last_play="2017-03-14 09:33:16")
-        print(client.data)
-        assert "400 BAD REQUEST" == client.status
-
-    def test_add_new_track_message(self):
         client = APITestCase.new_track(self, id=1, title="a title of a song", artist="An artists name", duration=532,
                                        last_play="2017-03-14 09:33:16")
+        assert "409 CONFLICT" == client.status
         assert '{"message": "track 1 already exists"}' in client.data.decode()
+
+        client = APITestCase.new_track(self, id=900000, title="a title of a song", artist="An artists name",
+                                       duration=532, last_play="2017-03-14 09:33:16")
+        assert "201 CREATED" == client.status
+        assert '{"track": [{"id": "900000", "title": "a title of a song", "artist": "An artists name",' \
+               ' "duration": "532", "last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
+
+
+        client = APITestCase.new_track(self, id=900000, title="a title of a different song",
+                                       artist="An different artists name", duration=22, last_play="2017-03-14 09:33:16")
+        assert "409 CONFLICT" == client.status
+
+        assert '{"message": "track 900000 already exists"}' in client.data.decode()
+
+        client = APITestCase.new_track(self, id=600000, title="a title of a different song",
+                                       artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
+        assert "201 CREATED" == client.status
+
+        assert '{"track": [{"id": "600000", "title": "a title of a different song",' \
+               ' "artist": "An different artists name", "duration": "232",' \
+               ' "last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
+
+
+
+
+        client = APITestCase.new_track(self, id="non numerical input", title="a title of a different song",
+                                       artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
+        assert "400 BAD REQUEST" == client.status
+        assert '{"message": "track_id non numerical input is not an integer"}' in client.data.decode()
+
+
+        client = APITestCase.new_track(self, id=25352, title="a title of a different song",
+                                       artist="An different artists name", duration="a random set of letters",
+                                       last_play="2017-03-14 09:33:16")
+        assert "400 BAD REQUEST" == client.status
+        assert '{"message": "duration a random set of letters is not an integer"}' in client.data.decode()
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

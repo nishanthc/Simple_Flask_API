@@ -56,7 +56,7 @@
 
 * **Data Params**
 
-  `track_id=[integer]`<br>
+  `id=[integer]`<br>
  `title=[string]`<br>
  `artist=[string]`<br>
  `duration=[integer]`<br>

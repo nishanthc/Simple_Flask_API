@@ -89,8 +89,19 @@ class LastPlayed(Resource):
         all_tracks_sorted = sorted(all_tracks, key=lambda key: key['last_play'],reverse=True)[:100]
         return {'tracks': all_tracks_sorted}
 
+
+class FilterTracks(Resource):
+    def get(self,filter_text):
+        filtered_list = []
+        for track in all_tracks:
+            title = track['title'].lower()
+            if filter_text.lower() in title:
+                filtered_list.append(track)
+        return {'tracks': filtered_list}
+
 api.add_resource(Track, '/tracks')
 api.add_resource(SingleTrack, '/tracks/<track_id>')
+api.add_resource(FilterTracks, '/tracks/filter_by_name/<filter_text>')
 api.add_resource(LastPlayed, '/last_played')
 
 if __name__ == '__main__':

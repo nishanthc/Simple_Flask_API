@@ -26,7 +26,7 @@ class APITestCase(unittest.TestCase):
 
 
 
-    def new_track(self,id,title,artist,duration,last_play):
+    def newTrack(self,id,title,artist,duration,last_play):
         client = self.app.post('/tracks', data=dict(
             id=id,
             title=title,
@@ -37,7 +37,7 @@ class APITestCase(unittest.TestCase):
         return client
 
 
-    def test_get_single_track_status(self):
+    def test_getSingleTrackStatus(self):
 
         client = self.app.get('/tracks/4444')
         assert "404 NOT FOUND" == client.status
@@ -51,7 +51,7 @@ class APITestCase(unittest.TestCase):
         client = self.app.get('/tracks/200')
         assert "200 OK" == client.status
 
-    def test_get_single_track_message(self):
+    def test_getSingleTrackMessage(self):
 
         client = self.app.get('/tracks/-1')
         assert '{\"message\": \"track -1 doesn\'t exist\"}' in client.data.decode()
@@ -75,15 +75,15 @@ class APITestCase(unittest.TestCase):
 
 
 
-    def test_add_new_track_status_message(self):
+    def test_addNewTrackStatusMessage(self):
 
 
-        client = APITestCase.new_track(self, id=1, title="a title of a song", artist="An artists name", duration=532,
+        client = APITestCase.newTrack(self, id=1, title="a title of a song", artist="An artists name", duration=532,
                                        last_play="2017-03-14 09:33:16")
         assert "409 CONFLICT" == client.status
         assert '{"message": "track 1 already exists"}' in client.data.decode()
 
-        client = APITestCase.new_track(self, id=900000, title="a title of a song", artist="An artists name",
+        client = APITestCase.newTrack(self, id=900000, title="a title of a song", artist="An artists name",
                                        duration=532, last_play="2017-03-14 09:33:16")
         assert "201 CREATED" == client.status
 
@@ -91,13 +91,13 @@ class APITestCase(unittest.TestCase):
                ' "duration": "532", "last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
 
-        client = APITestCase.new_track(self, id=900000, title="a title of a different song",
+        client = APITestCase.newTrack(self, id=900000, title="a title of a different song",
                                        artist="An different artists name", duration=22, last_play="2017-03-14 09:33:16")
         assert "409 CONFLICT" == client.status
 
         assert '{"message": "track 900000 already exists"}' in client.data.decode()
 
-        client = APITestCase.new_track(self, id=600000, title="a title of a different song",
+        client = APITestCase.newTrack(self, id=600000, title="a title of a different song",
                                        artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
         assert "201 CREATED" == client.status
 
@@ -108,13 +108,13 @@ class APITestCase(unittest.TestCase):
 
 
 
-        client = APITestCase.new_track(self, id="non numerical input", title="a title of a different song",
+        client = APITestCase.newTrack(self, id="non numerical input", title="a title of a different song",
                                        artist="an artists name", duration=232, last_play="2017-03-14 09:33:16")
         assert "400 BAD REQUEST" == client.status
         assert '{"message": "track_id non numerical input is not an integer"}' in client.data.decode()
 
 
-        client = APITestCase.new_track(self, id=25352, title="a title of a different song",
+        client = APITestCase.newTrack(self, id=25352, title="a title of a different song",
                                        artist="an artists name", duration="a random set of letters",
                                        last_play="2017-03-14 09:33:16")
         assert "400 BAD REQUEST" == client.status
@@ -122,11 +122,11 @@ class APITestCase(unittest.TestCase):
 
 
 
-    def test_last_played(self):
+    def test_LastPlayed(self):
         client = self.app.get('/last_played')
         assert "200 OK" == client.status
 
-        client = APITestCase.new_track(self, id=1234567, title="a recently played song",
+        client = APITestCase.newTrack(self, id=1234567, title="a recently played song",
                                        artist="an artists name", duration=232,
                                        last_play="2020-03-14 10:23:26")
 

@@ -36,6 +36,49 @@
 
     curl http://localhost:5000/tracks/10
 
+**Filter Tracks by Name**
+----
+  Filters tracks by title their title.
+
+* **URL**
+
+  /track/filter_by_name
+
+* **Method:**
+
+  `GET`
+
+*  **URL Params**
+
+   **Required:**
+
+   `filter_text= [string]`
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+    "tracks": [
+        {
+            "id": "3667",
+            "title": "I Get The Sweetest Feeling",
+            "artist": "Jackie Wilson",
+            "duration": "165",
+            "last_play": "2018-05-17 14:05:28"
+        }
+    ]
+}`
+
+
+
+* **Sample Call:**
+
+    curl http://localhost:5000/tracks/filter_by_name/I%20Get%20The%20Sweetest%20Feeling
+    
 **Create new track**
 ----
   Adds a new track and returns json data about the track
@@ -116,10 +159,6 @@
             "id": "583",
             "title": "Jus.....`
 
-* **Error Response:**
-
-  * **Code:** 404 NOT FOUND <br />
-    **Content:** `{\"message\": \"track 100000 doesn\'t exist\"}`
 
 * **Sample Call:**
 

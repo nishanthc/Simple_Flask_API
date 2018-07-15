@@ -20,4 +20,5 @@ We're looking to assess general Python ability and familiarity with APIs - there
 
 
 
-- List the first 100 tracks in the order they were last played
+- List the first 100 tracks in the order they were last played and tests
+- Filter tracks by name

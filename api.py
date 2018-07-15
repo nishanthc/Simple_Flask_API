@@ -149,8 +149,8 @@ class Artists(Resource):
 
             # If the artist is not yet in the list for holding artists last played datetime then put it in
             if artist not in artist_last_played_datetime:
-                # Convert datetime back into string and store
-                artist_last_played_datetime[artist] = last_played_of_track_from_file.strftime('%Y-%m-%d %H:%M:%S')
+                # Store date/time string in dictionary
+                artist_last_played_datetime[artist] = datetimestamp_from_file
                 # Adds title of the track to the dictionary
                 artist_last_played_track_title[artist] = title
 

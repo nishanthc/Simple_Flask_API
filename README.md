@@ -34,7 +34,7 @@
 
 * **Sample Call:**
 
-    curl http://localhost:5000/tracks
+    curl http://localhost:5000/tracks/10
 
 **Create new track**
 ----

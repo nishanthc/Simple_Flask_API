@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config['ERROR_404_HELP'] = False
 api = Api(app)
 
+# Arguments to catch
 parser = reqparse.RequestParser()
 parser.add_argument('id')
 parser.add_argument('title')
@@ -17,15 +18,24 @@ parser.add_argument('artist')
 parser.add_argument('duration')
 parser.add_argument('last_play')
 
+
+# Load JSON File
 with open('tracks.json') as json_file_r:
     try:
         all_tracks = json.load(json_file_r)
     except json.decoder.JSONDecodeError:
+        # If the JSON file cannot be read exit cleanly
         print("There is an issue with the JSON file. The server could not start.")
         exit()
 
-
+# Load JSON File
 def CheckTrackExists(track_id,error_redirect=True):
+    """Return True if track does not exist, if error_redirect=true and track doesn't exist then 404.
+    
+    Class and exception names are CapWords.
+    
+    Closing quotes are on their own line
+    """
     track = (list(filter(lambda track: track['id'] == track_id, all_tracks)))
 
     if not track and error_redirect:
@@ -35,16 +45,34 @@ def CheckTrackExists(track_id,error_redirect=True):
         return True
 
 def write_to_file(data):
+    """First line of a docstring is short and next to the quotes.
+
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
     with open('tracks.json','w') as json_file_w:
         json_file_w.write((json.dumps(data)))
 
 def is_int(variable_name,variable_content):
+    """First line of a docstring is short and next to the quotes.
+
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
     try:
         val = int(variable_content)
     except ValueError:
         abort(400, message="{} {} is not an integer".format(variable_name,variable_content))
 
 class SingleTrack(Resource):
+    """First line of a docstring is short and next to the quotes.
+
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
     def get(self, track_id):
         CheckTrackExists(track_id)
         track = (list(filter(lambda track: track['id'] == track_id, all_tracks)))
@@ -55,7 +83,12 @@ class SingleTrack(Resource):
         return args['task'], 201
 
 class Track(Resource):
+    """First line of a docstring is short and next to the quotes.
 
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
     def get(self):
         return {'tracks': all_tracks}
 
@@ -86,12 +119,24 @@ class Track(Resource):
 
 
 class LastPlayed(Resource):
+    """First line of a docstring is short and next to the quotes.
+
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
     def get(self):
         all_tracks_sorted = sorted(all_tracks, key=lambda key: key['last_play'],reverse=True)[:100]
         return {'tracks': all_tracks_sorted},200
 
 
 class FilterTracks(Resource):
+    """First line of a docstring is short and next to the quotes.
+
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
     def get(self,filter_text):
         filtered_list = []
         for track in all_tracks:
@@ -102,6 +147,14 @@ class FilterTracks(Resource):
 
 
 class Artists(Resource):
+    """First line of a docstring is short and next to the quotes.
+
+    Class and exception names are CapWords.
+
+    Closing quotes are on their own line
+    """
+
+
     def get(self):
         list_of_artists = []
         artist_last_played_datetime = {}

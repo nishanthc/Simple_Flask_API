@@ -31,13 +31,9 @@ with open('tracks.json') as json_file_r:
 # Load JSON File
 def CheckTrackExists(track_id,error_redirect=True):
     """Return True if track does not exist, if error_redirect=true and track doesn't exist then 404.
-    
-    Class and exception names are CapWords.
-    
-    Closing quotes are on their own line
     """
+    # Attempt to isolate track from the list of all tracks
     track = (list(filter(lambda track: track['id'] == track_id, all_tracks)))
-
     if not track and error_redirect:
         abort(404, message="track {} doesn't exist".format(track_id))
 
@@ -45,21 +41,15 @@ def CheckTrackExists(track_id,error_redirect=True):
         return True
 
 def write_to_file(data):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
+    """Write new data to the JSON file
     """
+
+    #Add exception handling!
     with open('tracks.json','w') as json_file_w:
         json_file_w.write((json.dumps(data)))
 
 def is_int(variable_name,variable_content):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
+    """Checks if a variable is an integer or not
     """
     try:
         val = int(variable_content)
@@ -67,27 +57,19 @@ def is_int(variable_name,variable_content):
         abort(400, message="{} {} is not an integer".format(variable_name,variable_content))
 
 class SingleTrack(Resource):
-    """First line of a docstring is short and next to the quotes.
+    """Returns details of a single track using the get method
 
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
     """
     def get(self, track_id):
         CheckTrackExists(track_id)
         track = (list(filter(lambda track: track['id'] == track_id, all_tracks)))
         return {'track': track}
 
-    def post(self):
-        args = parser.parse_args()
-        return args['task'], 201
+
 
 class Track(Resource):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
+    """The get method returns a list of all tracks
+       The post method can be used to create a new track.
     """
     def get(self):
         return {'tracks': all_tracks}
@@ -119,11 +101,7 @@ class Track(Resource):
 
 
 class LastPlayed(Resource):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
+    """Using the get method, this can be used to list the last 100 played tracks.
     """
     def get(self):
         all_tracks_sorted = sorted(all_tracks, key=lambda key: key['last_play'],reverse=True)[:100]
@@ -131,12 +109,8 @@ class LastPlayed(Resource):
 
 
 class FilterTracks(Resource):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
-    """
+    """Using the get method with an argument (filter_text) to return all tracks with a similar title as the filter_text
+        """
     def get(self,filter_text):
         filtered_list = []
         for track in all_tracks:
@@ -147,12 +121,9 @@ class FilterTracks(Resource):
 
 
 class Artists(Resource):
-    """First line of a docstring is short and next to the quotes.
-
-    Class and exception names are CapWords.
-
-    Closing quotes are on their own line
-    """
+    """With the GET method this will return a list of artists with their total number of tracks and most recently
+        played track.
+        """
 
 
     def get(self):

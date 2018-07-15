@@ -16,7 +16,11 @@ parser.add_argument('duration')
 parser.add_argument('last_play')
 
 with open('tracks.json') as json_file_r:
-    all_tracks = json.load(json_file_r)
+    try:
+        all_tracks = json.load(json_file_r)
+    except json.decoder.JSONDecodeError:
+        print("There is an issue with the JSON file. The server could not start.")
+        exit()
 
 
 def CheckTrackExists(track_id,error_redirect=True):

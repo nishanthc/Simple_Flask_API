@@ -5,15 +5,26 @@ import unittest
 
 class APITestCase(unittest.TestCase):
 
-    def setUp(self):
-
-        api.app.testing = True
+    def reset_file(self):
         with open('tracks_backup.json') as json_file:
             self.all_tracks = json.load(json_file)
 
         with open('tracks.json', 'w') as json_file_w:
             json_file_w.write(json.dumps(self.all_tracks))
+
+
+    def setUp(self):
+
+        api.app.testing = True
+        APITestCase.reset_file(self)
         self.app = api.app.test_client()
+
+    def tearDown(self):
+        APITestCase.reset_file(self)
+
+
+
+
 
     def new_track(self,id,title,artist,duration,last_play):
         client = self.app.post('/tracks', data=dict(
@@ -75,6 +86,7 @@ class APITestCase(unittest.TestCase):
         client = APITestCase.new_track(self, id=900000, title="a title of a song", artist="An artists name",
                                        duration=532, last_play="2017-03-14 09:33:16")
         assert "201 CREATED" == client.status
+
         assert '{"track": [{"id": "900000", "title": "a title of a song", "artist": "An artists name",' \
                ' "duration": "532", "last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
@@ -97,18 +109,33 @@ class APITestCase(unittest.TestCase):
 
 
         client = APITestCase.new_track(self, id="non numerical input", title="a title of a different song",
-                                       artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
+                                       artist="an artists name", duration=232, last_play="2017-03-14 09:33:16")
         assert "400 BAD REQUEST" == client.status
         assert '{"message": "track_id non numerical input is not an integer"}' in client.data.decode()
 
 
         client = APITestCase.new_track(self, id=25352, title="a title of a different song",
-                                       artist="An different artists name", duration="a random set of letters",
+                                       artist="an artists name", duration="a random set of letters",
                                        last_play="2017-03-14 09:33:16")
         assert "400 BAD REQUEST" == client.status
         assert '{"message": "duration a random set of letters is not an integer"}' in client.data.decode()
 
 
+
+    def test_last_played(self):
+        client = self.app.get('/last_played')
+        assert "200 OK" == client.status
+
+        client = APITestCase.new_track(self, id=1234567, title="a recently played song",
+                                       artist="an artists name", duration=232,
+                                       last_play="2020-03-14 10:23:26")
+
+        assert "201 CREATED" == client.status
+
+        client = self.app.get('/last_played')
+        last_played = json.loads(client.data.decode())
+        id_of_last_played = last_played['tracks'][0]['id']
+        assert int(id_of_last_played) == int(1234567)
 
 
 if __name__ == '__main__':

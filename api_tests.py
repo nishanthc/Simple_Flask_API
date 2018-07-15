@@ -14,39 +14,49 @@ class FlaskrTestCase(unittest.TestCase):
 
 
     def test_get_single_track_status(self):
-        client = self.app.get('/track/4444')
+
+        client = self.app.get('/tracks/4444')
         assert "404 NOT FOUND" == client.status
 
-        client = self.app.get('/track/%@^@^@£^^£')
+        client = self.app.get('/tracks/%@^@^@£^^£')
         assert "404 NOT FOUND" == client.status
 
-        client = self.app.get('/track/1')
+        client = self.app.get('/tracks/1')
         assert "200 OK" == client.status
 
-        client = self.app.get('/track/200')
+        client = self.app.get('/tracks/200')
         assert "200 OK" == client.status
 
     def test_get_single_track_message(self):
 
+        client = self.app.get('/tracks/-1')
+        assert '{\"message\": \"track -1 doesn\'t exist\"}' in client.data.decode()
 
-        rv = self.app.get('/track/-1')
-        assert '{\"message\": \"track -1 doesn\'t exist\"}' in rv.data.decode()
-
-        client = self.app.get('/track/4444')
+        client = self.app.get('/tracks/4444')
         assert '{\"message\": \"track 4444 doesn\'t exist\"}' in client.data.decode()
 
-        client = self.app.get('/track/N0TANINT')
+        client = self.app.get('/tracks/N0TANINT')
         assert '{"message": "track N0TANINT doesn\'t exist"}' in client.data.decode()
 
 
-        client = self.app.get('/track/5')
+        client = self.app.get('/tracks/5')
         assert '{"track": [{"id": "5", "title": "Paparazzi", "artist": "Lady GaGa", "duration": "199", "last_play": ' \
                '"2016-02-23 08:24:37"}]}' in client.data.decode()
 
 
-        client = self.app.get('/track/100')
+        client = self.app.get('/tracks/100')
         assert '{"track": [{"id": "100", "title": "Addicted To Love", "artist": "Robert Palmer", "duration": "188", ' \
                '"last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
+
+    def test_add_new_track(self):
+        client = self.app.post('/tracks',data=dict(
+            id="1000",
+            title="A new song",
+            artist="A new artist",
+            duration="842",
+            last_play="2017-03-14 09:33:16"
+                                                  ))
+        print (client.data)
 
 
 if __name__ == '__main__':

@@ -1,18 +1,38 @@
-# Global Python task
-# ==================
+#
+**Show Track**
+----
+  Returns json data about a single track.
 
-Create a small Python application that provides a REST API of the provided JSON data. You may use any framework or libraries (or none).
+* **URL**
 
-The API should allow a client to perform the following:
+  /track/:track_id
 
-- Fetch a single track
-- Create a new track
-- List the first 100 tracks in the order they were last played
-- Filter tracks by name
+* **Method:**
 
-Bonus:
+  `GET`
 
-- Allow the client to fetch a list of artists. Each item should contain the total number of tracks for that artist and their most recently play track.
+*  **URL Params**
+
+   **Required:**
+
+   `track_id=[integer]`
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"track": [{"id": "5", "title": "Paparazzi", "artist": "Lady GaGa", "duration": "199", "last_play": ' \
+       '"2016-02-23 08:24:37"}]}`
+
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{\"message\": \"track 100000 doesn\'t exist\"}`
 
 
-We're looking to assess general Python ability and familiarity with APIs - there's no need to set up a full production grade stack.
+* **Sample Call:**
+
+    curl http://localhost:5000/todos -d "id=4525&title=The Songs Name&artist=The Artists Name&duration=150&2018-05-17 16:56:21 new" -X POST -v

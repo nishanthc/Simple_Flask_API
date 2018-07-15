@@ -80,13 +80,14 @@ class Track(Resource):
         return SingleTrack.get(self,track_id=track_id), 201
 
 
-class TrackList(Resource):
+class LastPlayed(Resource):
     def get(self):
-        return {'tracks': all_tracks}
+        all_tracks_sorted = sorted(all_tracks, key=lambda key: key['last_play'],reverse=True)[:100]
+        return {'tracks': all_tracks_sorted}
 
 api.add_resource(Track, '/tracks')
 api.add_resource(SingleTrack, '/tracks/<track_id>')
-api.add_resource(TrackList, '/tracklist')
+api.add_resource(LastPlayed, '/lastplayed')
 
 if __name__ == '__main__':
 

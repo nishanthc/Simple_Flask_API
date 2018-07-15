@@ -19,5 +19,5 @@ We're looking to assess general Python ability and familiarity with APIs - there
 
 
 
-- Fetch a single track done!
-- Create a new single track done  (Add validation for inputs)
+
+- List the first 100 tracks in the order they were last played

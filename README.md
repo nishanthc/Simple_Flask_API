@@ -32,7 +32,9 @@
   * **Code:** 404 NOT FOUND <br />
     **Content:** `{\"message\": \"track 100000 doesn\'t exist\"}`
 
+* **Sample Call:**
 
+    curl http://localhost:5000/tracks
 
 **Create new track**
 ----
@@ -73,5 +75,5 @@
 
 * **Sample Call:**
 
-    curl http://localhost:5000/todos -d "id=4525&title=The Songs Name&artist=The Artists Name&duration=150&2018-05-17 16:56:21 new" -X POST -v
+    curl http://localhost:5000/tracks -d "id=4525&title=The Songs Name&artist=The Artists Name&duration=150&2018-05-17 16:56:21 new" -X POST -v
 

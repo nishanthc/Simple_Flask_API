@@ -54,7 +54,7 @@ def is_int(variable_name, variable_content):
     """Checks if a variable is an integer or not
     """
     try:
-        val = int(variable_content)
+        int(variable_content)
     except ValueError:
         abort(400, message="{} {} is not an integer".format(variable_name, variable_content))
 
@@ -136,29 +136,46 @@ class Artists(Resource):
         artist_last_played_track_title = {}
         artists_with_data = []
 
+        # Loop through all tracks
         for track in all_tracks:
-            list_of_artists.append((track['artist']))
-            datetimestamp_from_file = track['last_play']
-            last_played_of_track_from_file = datetime.strptime(datetimestamp_from_file, '%Y-%m-%d %H:%M:%S')
+
+            list_of_artists.append((track['artist']))  # Adding artists to a list of artists
             artist = track['artist']
             title = track['title']
+            datetimestamp_from_file = track['last_play']  # Date/time string from file
+
+            # Converts string date/time into a real Datetime
+            last_played_of_track_from_file = datetime.strptime(datetimestamp_from_file, '%Y-%m-%d %H:%M:%S')
+
+            # If the artist is not yet in the list for holding artists last played datetime then put it in
             if artist not in artist_last_played_datetime:
+                # Convert datetime back into string and store
                 artist_last_played_datetime[artist] = last_played_of_track_from_file.strftime('%Y-%m-%d %H:%M:%S')
+                # Adds title of the track to the dictionary
                 artist_last_played_track_title[artist] = title
 
-            if datetime.strptime(artist_last_played_datetime[artist],
-                                 '%Y-%m-%d %H:%M:%S') < last_played_of_track_from_file:
-                artist_last_played_datetime[artist] = last_played_of_track_from_file.strftime('%Y-%m-%d %H:%M:%S')
+            # Converts string datetime back to a Datetime
+            datetime_from_array = datetime.strptime(artist_last_played_datetime[artist], '%Y-%m-%d %H:%M:%S')
+
+            # If the Datetime from the file is later than in the array overwrite it and add the title of the track
+            if datetime_from_array < last_played_of_track_from_file:
+                artist_last_played_datetime[artist] = datetimestamp_from_file
                 artist_last_played_track_title[artist] = title
 
+        # Count the tracks of each artist
         artists_track_count = dict(Counter(list_of_artists))
+
+        # Remove duplicate artists from the list of artists
         list_of_artists = list(set(list_of_artists))
 
+        # Loop through list of artists
         for artist in list_of_artists:
+            # incase of empty artist fields, check artist
             if artist:
-                artists_with_data.append({"artist": artist, "plays": artists_track_count[artist],
+                # Add the artist name, number of tracks and the last played track to a dictionary
+                artists_with_data.append({"artist": artist, "track_count": artists_track_count[artist],
                                           "last_played_track": str(artist_last_played_track_title[artist])})
-        artists_with_data = artists_with_data
+
         return {'artists': artists_with_data}, 200
 
 

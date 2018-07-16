@@ -5,8 +5,8 @@ import unittest
 
 class APITestCase(unittest.TestCase):
     def reset_file(self):
-        ''' The function restores the tracks.json file after each test.
-        '''
+        """ The function restores the tracks.json file after each test.
+        """
         with open('tracks_backup.json') as json_file:
             self.all_tracks = json.load(json_file)
 
@@ -22,8 +22,8 @@ class APITestCase(unittest.TestCase):
         APITestCase.reset_file(self)
 
     def newTrack(self, id, title, artist, duration, last_play):
-        ''' This method is to quickly add tracks (using the API) for testing
-        '''
+        """ This method is to quickly add tracks (using the API) for testing
+        """
         client = self.app.post('/tracks', data=dict(
             id=id,
             title=title,
@@ -34,10 +34,10 @@ class APITestCase(unittest.TestCase):
         return client
 
     def test_getSingleTrackStatus(self):
-        ''' Tests to see if the correct status is returned after track using the GET method on the
+        """ Tests to see if the correct status is returned after track using the GET method on the
             endpoint:
             /tracks/<track_id> 
-        '''
+        """
 
         # A track with this track_id does not exist so should return a 404
         client = self.app.get('/tracks/4444')
@@ -56,10 +56,10 @@ class APITestCase(unittest.TestCase):
         assert "200 OK" == client.status
 
     def test_getSingleTrackMessage(self):
-        ''' Tests to see if the correct message is returned after requesting a track using the GET method on the
+        """ Tests to see if the correct message is returned after requesting a track using the GET method on the
             endpoint:
             /tracks/<track_id> 
-        '''
+        """
         # A track with this track_id does not exist so should return an error
         client = self.app.get('/tracks/-1')
         assert '{\"message\": \"track -1 doesn\'t exist\"}' in client.data.decode()
@@ -83,10 +83,10 @@ class APITestCase(unittest.TestCase):
                '"last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
     def test_addNewTrackStatusMessage(self):
-        ''' Tests to see if the correct status is returned after creating a new track using the POST method on the
+        """ Tests to see if the correct status is returned after creating a new track using the POST method on the
             endpoint:
             /tracks 
-        '''
+        """
 
         # A track with this track_id already exists so this should return a 409 CONFLICT.
         # A message should be returned saying a track arlready exists
@@ -135,10 +135,10 @@ class APITestCase(unittest.TestCase):
         assert '{"message": "duration a random set of letters is not an integer"}' in client.data.decode()
 
     def test_LastPlayed(self):
-        '''  Tests to see if the last 100 played songs can be returned 
+        """  Tests to see if the last 100 played songs can be returned 
              Using the GET method on the endpoint:
              /last_played
-        '''
+        """
 
         # Tests to see if the endpoint loads without any issues, returning a 200 OK
         client = self.app.get('/last_played')
@@ -158,9 +158,9 @@ class APITestCase(unittest.TestCase):
         assert int(id_of_last_played) == int(1234567)
 
     def test_FilterbyName(self):
-        ''' Tests whether the filter by song title works by using the GET method on:
+        """ Tests whether the filter by song title works by using the GET method on:
             /tracks/filter_by_name/
-        '''
+        """
         # Creates a new track with an identifable title and tests the creation
         test_title = "a unique name"
         client = APITestCase.newTrack(self, id=1234568, title=test_title,
@@ -175,11 +175,11 @@ class APITestCase(unittest.TestCase):
         assert str(closest_match) == str(test_title)
 
     def test_artists(self):
-        '''  Tests to see if all artists can be returned along with the number of tracks to their name and their
+        """  Tests to see if all artists can be returned along with the number of tracks to their name and their
              most recently played track.
              Using the GET method on the endpoint:
              /artists
-        '''
+        """
 
         # Adds 4 new tracks to a new unique artist. All tracks have a different last_play, the track with the most
         # recent last_play date/time has a unique title.

@@ -34,7 +34,8 @@ class APITestCase(unittest.TestCase):
         return client
 
     def test_getSingleTrackStatus(self):
-        ''' Tests to see if the correct status is returned after requesting a track using the endpoint:
+        ''' Tests to see if the correct status is returned after track using the GET method on the
+            endpoint:
             /tracks/<track_id> 
         '''
 
@@ -55,7 +56,8 @@ class APITestCase(unittest.TestCase):
         assert "200 OK" == client.status
 
     def test_getSingleTrackMessage(self):
-        ''' Tests to see if the correct message is returned after requesting a track using the endpoint:
+        ''' Tests to see if the correct message is returned after requesting a track using the GET method on the
+            endpoint:
             /tracks/<track_id> 
         '''
         # A track with this track_id does not exist so should return an error
@@ -81,37 +83,51 @@ class APITestCase(unittest.TestCase):
                '"last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
     def test_addNewTrackStatusMessage(self):
+        ''' Tests to see if the correct status is returned after creating a new track using the POST method on the
+            endpoint:
+            /tracks 
+        '''
+
+        # A track with this track_id already exists so this should return a 409 CONFLICT.
+        # A message should be returned saying a track arlready exists
         client = APITestCase.newTrack(self, id=1, title="a title of a song", artist="An artists name", duration=532,
                                       last_play="2017-03-14 09:33:16")
         assert "409 CONFLICT" == client.status
         assert '{"message": "track 1 already exists"}' in client.data.decode()
 
+        # A track should be created a 201 CREATED status should be returned
+        # A message should be returned with JSON data on the new track
         client = APITestCase.newTrack(self, id=900000, title="a title of a song", artist="An artists name",
                                       duration=532, last_play="2017-03-14 09:33:16")
         assert "201 CREATED" == client.status
-
         assert '{"track": [{"id": "900000", "title": "a title of a song", "artist": "An artists name",' \
                ' "duration": "532", "last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
+        # A track with this track_id already exists so this should return a 409 CONFLICT.
+        # A message should be returned saying a track arlready exists
         client = APITestCase.newTrack(self, id=900000, title="a title of a different song",
                                       artist="An different artists name", duration=22, last_play="2017-03-14 09:33:16")
         assert "409 CONFLICT" == client.status
-
         assert '{"message": "track 900000 already exists"}' in client.data.decode()
 
+        # A track should be created a 201 CREATED status should be returned
+        # A message should be returned with JSON data on the new track
         client = APITestCase.newTrack(self, id=600000, title="a title of a different song",
                                       artist="An different artists name", duration=232, last_play="2017-03-14 09:33:16")
         assert "201 CREATED" == client.status
-
         assert '{"track": [{"id": "600000", "title": "a title of a different song",' \
                ' "artist": "An different artists name", "duration": "232",' \
                ' "last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()
 
+        # As the id is non numberical, this should fail and return a 400 BAD REQUEST
+        # A message should be returned with infomation on what the error is
         client = APITestCase.newTrack(self, id="non numerical input", title="a title of a different song",
                                       artist="an artists name", duration=232, last_play="2017-03-14 09:33:16")
         assert "400 BAD REQUEST" == client.status
         assert '{"message": "track_id non numerical input is not an integer"}' in client.data.decode()
 
+        # As the id is non numberical, this should fail and return a 400 BAD REQUEST
+        # A message should be returned with infomation on what the error is
         client = APITestCase.newTrack(self, id=25352, title="a title of a different song",
                                       artist="an artists name", duration="a random set of letters",
                                       last_play="2017-03-14 09:33:16")
@@ -119,23 +135,31 @@ class APITestCase(unittest.TestCase):
         assert '{"message": "duration a random set of letters is not an integer"}' in client.data.decode()
 
     def test_LastPlayed(self):
+        '''  Tests to see if the last 100 played songs can be returned 
+             Using the GET method on the endpoint:
+             /last_played
+        '''
+        
+        # Tests to see if the endpoint loads without any issues, returning a 200 OK
         client = self.app.get('/last_played')
-
         assert "200 OK" == client.status
 
+        # Tests to see if a new track with a very recent last play can be created
         client = APITestCase.newTrack(self, id=1234567, title="a recently played song",
                                       artist="an artists name", duration=232,
                                       last_play="2020-03-14 10:23:26")
-
         assert "201 CREATED" == client.status
 
+        # Loads the last played again but this time stores the last played song and check if it is the same,
+        # as the one created above.
         client = self.app.get('/last_played')
         last_played = json.loads(client.data.decode())
         id_of_last_played = last_played['tracks'][0]['id']
-
         assert int(id_of_last_played) == int(1234567)
 
     def test_FilterbyName(self):
+        ''' Tests whether 
+        '''
         test_title = "a unique name"
         client = APITestCase.newTrack(self, id=1234568, title=test_title,
                                       artist="an artists name", duration=232,

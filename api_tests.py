@@ -139,7 +139,7 @@ class APITestCase(unittest.TestCase):
              Using the GET method on the endpoint:
              /last_played
         '''
-        
+
         # Tests to see if the endpoint loads without any issues, returning a 200 OK
         client = self.app.get('/last_played')
         assert "200 OK" == client.status
@@ -158,21 +158,31 @@ class APITestCase(unittest.TestCase):
         assert int(id_of_last_played) == int(1234567)
 
     def test_FilterbyName(self):
-        ''' Tests whether 
+        ''' Tests whether the filter by song title works by using the GET method on:
+            /tracks/filter_by_name/
         '''
+        # Creates a new track with an identifable title and tests the creation
         test_title = "a unique name"
         client = APITestCase.newTrack(self, id=1234568, title=test_title,
                                       artist="an artists name", duration=232,
                                       last_play="2010-03-14 10:23:26")
         assert "201 CREATED" == client.status
 
+        # Tests if the track can be found using the filter_by_name endpoint
         client = self.app.get('/tracks/filter_by_name/' + test_title)
         filtered_tracks = json.loads(client.data.decode())
-
         closest_match = filtered_tracks['tracks'][0]['title']
         assert str(closest_match) == str(test_title)
 
     def test_artists(self):
+        '''  Tests to see if all artists can be returned along with the number of tracks to their name and their
+             most recently played track.
+             Using the GET method on the endpoint:
+             /artists
+        '''
+
+        # Adds 4 new tracks to a new unique artist. All tracks have a different last_play, the track with the most
+        # recent last_play date/time has a unique title.
         test_title_fail = "not the title with the latest play"
         test_title = "The title with the latest play"
         client = APITestCase.newTrack(self, id=2525, title=test_title_fail,
@@ -192,12 +202,15 @@ class APITestCase(unittest.TestCase):
                                       last_play="2020-03-14 10:23:26")
         assert "201 CREATED" == client.status
 
+        # Tests to see if the artist, their total_tracks count and their most recently played
+        # song are returned when calling the endpoint
         client = self.app.get('/artists')
         artists = json.loads(client.data.decode())
         artists = artists['artists']
 
         test_artist = next((artist for artist in artists if artist["artist"] == "an artist with 5 songs"))
         assert str(test_artist['artist']) == "an artist with 5 songs"
+        assert test_artist['track_count'] == 4
         assert str(test_artist['last_played_track']) == "The title with the latest play"
 
 

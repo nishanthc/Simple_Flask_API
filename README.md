@@ -1,3 +1,8 @@
+**Instructions**
+----
+
+Start the server by running api.py<br><br>
+By default the server will start on port 5000.
 
 **Show Track**
 ----

@@ -16,9 +16,3 @@ Bonus:
 
 
 We're looking to assess general Python ability and familiarity with APIs - there's no need to set up a full production grade stack.
-
-
-
-
-- List the first 100 tracks in the order they were last played and tests
-- Filter tracks by name

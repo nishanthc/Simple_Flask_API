@@ -34,11 +34,18 @@ def checkTrackExists(track_id, error_redirect=True):
 
     # Attempt to isolate track from the list of all tracks
     track = (list(filter(lambda track: track['id'] == track_id, all_tracks)))
+
+    # If the track does not exist and error_redirect is enabled then 404 cleanly
     if not track and error_redirect:
         abort(404, message="track {} doesn't exist".format(track_id))
 
+    # If the track does exist and no error_redirect just return True
     if track and not error_redirect:
         return True
+
+    # If the track does exist and no error_redirect just return False
+    if not track and not error_redirect:
+        return False
 
 
 def write_to_file(data):
@@ -61,7 +68,6 @@ def is_int(variable_name, variable_content):
 
 class SingleTrack(Resource):
     """Returns details of a single track using the get method
-
     """
 
     def get(self, track_id):

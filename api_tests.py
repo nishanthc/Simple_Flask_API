@@ -5,6 +5,8 @@ import unittest
 
 class APITestCase(unittest.TestCase):
     def reset_file(self):
+        ''' The function restores the tracks.json file after each test.
+        '''
         with open('tracks_backup.json') as json_file:
             self.all_tracks = json.load(json_file)
 
@@ -20,6 +22,8 @@ class APITestCase(unittest.TestCase):
         APITestCase.reset_file(self)
 
     def newTrack(self, id, title, artist, duration, last_play):
+        ''' This method is to quickly add tracks (using the API) for testing
+        '''
         client = self.app.post('/tracks', data=dict(
             id=id,
             title=title,
@@ -30,32 +34,48 @@ class APITestCase(unittest.TestCase):
         return client
 
     def test_getSingleTrackStatus(self):
+        ''' Tests to see if the correct status is returned after requesting a track using the endpoint:
+            /tracks/<track_id> 
+        '''
+
+        # A track with this track_id does not exist so should return a 404
         client = self.app.get('/tracks/4444')
         assert "404 NOT FOUND" == client.status
 
+        # A track with this track_id does not exist so should return a 404
         client = self.app.get('/tracks/%@^@^@£^^£')
         assert "404 NOT FOUND" == client.status
 
+        # A track with this track_id does so should return a 200
         client = self.app.get('/tracks/1')
         assert "200 OK" == client.status
 
+        # A track with this track_id does so should return a 200
         client = self.app.get('/tracks/200')
         assert "200 OK" == client.status
 
     def test_getSingleTrackMessage(self):
+        ''' Tests to see if the correct message is returned after requesting a track using the endpoint:
+            /tracks/<track_id> 
+        '''
+        # A track with this track_id does not exist so should return an error
         client = self.app.get('/tracks/-1')
         assert '{\"message\": \"track -1 doesn\'t exist\"}' in client.data.decode()
 
+        # A track with this track_id does not exist so should return an error
         client = self.app.get('/tracks/4444')
         assert '{\"message\": \"track 4444 doesn\'t exist\"}' in client.data.decode()
 
+        # A track with this track_id does not exist so should return an error
         client = self.app.get('/tracks/N0TANINT')
         assert '{"message": "track N0TANINT doesn\'t exist"}' in client.data.decode()
 
+        # A track with this track_id does exist so should return JSON with track data
         client = self.app.get('/tracks/5')
         assert '{"track": [{"id": "5", "title": "Paparazzi", "artist": "Lady GaGa", "duration": "199", "last_play": ' \
                '"2016-02-23 08:24:37"}]}' in client.data.decode()
 
+        # A track with this track_id does exist so should return JSON with track data
         client = self.app.get('/tracks/100')
         assert '{"track": [{"id": "100", "title": "Addicted To Love", "artist": "Robert Palmer", "duration": "188", ' \
                '"last_play": "2017-03-14 09:33:16"}]}' in client.data.decode()

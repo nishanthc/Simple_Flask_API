@@ -1,8 +1,16 @@
 **Instructions**
 ----
 
+Install all dependencies by running:<br><br>
+```console
+root:~$ pip install -r requirements.txt
+```
+
 Start the server by running api.py<br><br>
-By default the server will start on port 5000.
+```console
+root:~$ python api.py
+```
+Note: By default the server will start on port 5000.
 
 **Show Track**
 ----
